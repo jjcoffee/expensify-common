@@ -47,8 +47,10 @@ describe('Str.isValidEmail', () => {
     it('Correctly identifies valid emails', () => {
         expect(Str.isValidEmail('abc@gmail.com')).toBeTruthy();
 
-        // Domain length (63 chars)
+        // Domain length (63 chars in each label)
         expect(Str.isValidEmail('test@asjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekjcjdkekejdcjdkeekcj.com')).toBeTruthy();
+        expect(Str.isValidEmail('abc@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.km')).toBeTruthy();
+        expect(Str.isValidEmail('abc@co.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890.km')).toBeTruthy();
 
         // Address length (64 chars)
         expect(Str.isValidEmail('sjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekjcjdkekejdcjdkeekcjab@test.com')).toBeTruthy();
@@ -58,9 +60,14 @@ describe('Str.isValidEmail', () => {
 
         // Domain with lots of dashes
         expect(Str.isValidEmail('sjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekjcjdkekejdcjdkeekcjab@asj-j-s-sjdjdjdjd-jdjjeiwiwiwowkdjdjdieikdjfidekjcjdkekejdcjdke.com.ab.net.aa.bb.cc.dd.ee')).toBeTruthy();
+        expect(Str.isValidEmail('abc@g---m--ai-l.com')).toBeTruthy();
 
         // Domain with repeated labels of 63 chars
         expect(Str.isValidEmail('test@asjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekasgasgasgasgashfnfn.asjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekasgasgasgasgashfnfn.asjjssjdjdjdjdjdjjeiwiwiwowkdjdjdieikdjfidekasgasgasgasgashfnfn.com')).toBeTruthy();
+
+        // TLD >=2 chars
+        expect(Str.isValidEmail('abc@gmail.co')).toBeTruthy();
+        expect(Str.isValidEmail('a@a.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijk')).toBeTruthy();
 
         // Very short address
         expect(Str.isValidEmail('a@example.com')).toBeTruthy();
@@ -90,8 +97,10 @@ describe('Str.isValidEmail', () => {
         expect(Str.isValidEmail('.test.new@example.com')).toBeFalsy();
         expect(Str.isValidEmail('test.@example.com')).toBeFalsy();
 
-        // Domain too long (>63 chars)
+        // Domain too long (>63 chars in each label)
         expect(Str.isValidEmail('test@averylongdomainpartoftheemailthatwillgooverthelimitasitismorethan63chars.com')).toBeFalsy();
+        expect(Str.isValidEmail('abc@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890a.km')).toBeFalsy();
+        expect(Str.isValidEmail('abc@co.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890a.km')).toBeFalsy();
 
         // Address too long (>64 chars)
         expect(Str.isValidEmail('averylongaddresspartoftheemailthatwillgovoerthelimitasitismorethan64chars@example.com')).toBeFalsy();
@@ -105,6 +114,9 @@ describe('Str.isValidEmail', () => {
 
         // TLD too short
         expect(Str.isValidEmail('test@example.a')).toBeFalsy();
+
+        // TLD too long
+        expect(Str.isValidEmail('a@a.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkl')).toBeFalsy();
     });
 });
 
