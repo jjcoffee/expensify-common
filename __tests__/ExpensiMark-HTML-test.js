@@ -161,6 +161,21 @@ test('Test markdown replacement for emails wrapped in bold/strikethrough/italic 
     expect(parser.replace(testInput)).toBe(result);
 });
 
+// Check emails within other markdown
+test('Test emails within other markdown', () => {
+    const testString = '> test@example.com\n'
+    + '```test@example.com```\n'
+    + '`test@example.com`\n'
+    + '_test@example.com_ '
+    + '__test@example.com_';
+    const result = '<blockquote><a href="mailto:test@example.com">test@example.com</a></blockquote>'
+    + '<pre>test@example.com</pre>'
+    + '<code>test@example.com</code><br />'
+    + '<em><a href="mailto:test@example.com">test@example.com</a></em> '
+    + '<em><a href="mailto:_test@example.com">_test@example.com</a></em>';
+    expect(parser.replace(testString)).toBe(result);
+});
+
 // Check email regex's validity at various limits
 test('Test markdown replacement for valid emails', () => {
     const testString = 'A simple email: abc@gmail.com, '
