@@ -91,6 +91,8 @@ describe('Str.isValidEmail', () => {
         expect(Str.isValidEmail('test@example_123site.com')).toBeFalsy();
         expect(Str.isValidEmail('test{@example.com')).toBeFalsy();
         expect(Str.isValidEmail('test..new@example.com')).toBeFalsy();
+        expect(Str.isValidEmail('test@example-.a.com')).toBeFalsy();
+        expect(Str.isValidEmail('test@example......a.com')).toBeFalsy();
 
         // Invalid period location
         expect(Str.isValidEmail('.test@example.com')).toBeFalsy();
