@@ -21,6 +21,14 @@ test('Test multi-line bold markdown replacement', () => {
     expect(parser.replace(testString)).toBe(replacedString);
 });
 
+test('Test heading markdown replacement', () => {
+    let testString = '# Heading should not have new line after it.\n';
+    expect(parser.replace(testString)).toBe('<h1>Heading should not have new line after it.</h1>');
+
+    testString = '# Heading should have only one new line after it.\n\n';
+    expect(parser.replace(testString)).toBe('<h1>Heading should have only one new line after it.</h1><br />');
+});
+
 // Sections starting with > are successfully wrapped with <blockquote></blockquote>
 test('Test quote markdown replacement', () => {
     const quoteTestStartString = '>This is a *quote* that started on a new line.\nHere is a >quote that did not\n```\nhere is a codefenced quote\n>it should not be quoted\n```';
@@ -592,8 +600,9 @@ test('Test markdown style email link with various styles', () => {
         + '*[Expensify](concierge@expensify.com)* '
         + '[Expensify!](no-concierge1@expensify.com) '
         + '[Applause](applausetester+qaabecciv@applause.expensifail.com) '
-        + '[](concierge@expensify.com)' // empty in []
-        + '[   ](concierge@expensify.com)' // only spaces in []
+        + '[](concierge@expensify.com)' // only parse autoEmail in ()
+        + '[   ](concierge@expensify.com)' // only parse autoEmail in () and keep spaces in []
+        + '[   \n ](concierge@expensify.com)' // only parse autoEmail in () and keep spaces in []
         + '[ Expensify ](concierge@expensify.com)' // edge spaces in []
         + '[ Expensify Email ](concierge@expensify.com)' // space between words in []
         + '[concierge@expensify.com](concierge@expensify.com)' // same email between [] and ()
@@ -608,8 +617,9 @@ test('Test markdown style email link with various styles', () => {
         + '<strong><a href="mailto:concierge@expensify.com">Expensify</a></strong> '
         + '<a href="mailto:no-concierge1@expensify.com">Expensify!</a> '
         + '<a href="mailto:applausetester+qaabecciv@applause.expensifail.com">Applause</a> '
-        + '<a href="mailto:concierge@expensify.com"></a>'
-        + '<a href="mailto:concierge@expensify.com"></a>'
+        + '[](<a href="mailto:concierge@expensify.com">concierge@expensify.com</a>)'
+        + '[   ](<a href="mailto:concierge@expensify.com">concierge@expensify.com</a>)'
+        + '[   <br /> ](<a href="mailto:concierge@expensify.com">concierge@expensify.com</a>)'
         + '<a href="mailto:concierge@expensify.com">Expensify</a>'
         + '<a href="mailto:concierge@expensify.com">Expensify Email</a>'
         + '<a href="mailto:concierge@expensify.com">concierge@expensify.com</a>'
@@ -866,6 +876,11 @@ test('Test quotes markdown replacement with heading inside', () => {
 test('Test heading1 markdown replacement with line break before or after the heading1', () => {
     const testString = 'test\n\n# heading\n\ntest';
     expect(parser.replace(testString)).toBe('test<br /><br /><h1>heading</h1><br />test');
+});
+
+test('Test heading1 markdown replacement when heading appear after the quote', () => {
+    const testString = '> quote \n# heading 1 after the quote.\nHere is a multi-line\ncomment that contains *bold* string.';
+    expect(parser.replace(testString)).toBe('<blockquote>quote</blockquote><h1>heading 1 after the quote.</h1>Here is a multi-line<br />comment that contains <strong>bold</strong> string.');
 });
 
 // Valid text that should match for user mentions
