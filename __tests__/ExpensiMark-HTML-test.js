@@ -1143,3 +1143,72 @@ test('Skip rendering invalid markdown',() => {
     testString = '> *This is multiline\nbold text*';
     expect(parser.replace(testString)).toBe('<blockquote>*This is multiline</blockquote>bold text*');
 });
+
+test('Test for email with test+1@gmail.com@gmail.com', () => {
+    const testString = 'test+1@gmail.com@gmail.com';
+    const resultString = '<a href=\"mailto:test+1@gmail.com\">test+1@gmail.com</a>@gmail.com';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test for email with test@gmail.com@gmail.com', () => {
+    const testString = 'test@gmail.com@gmail.com';
+    const resultString = '<a href=\"mailto:test@gmail.com\">test@gmail.com</a>@gmail.com';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test for email with test@here@gmail.com', () => {
+    const testString = 'test@here@gmail.com';
+    const resultString = 'test@<a href=\"mailto:here@gmail.com\">here@gmail.com</a>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test for email with test+1@here@gmail.com', () => {
+    const testString = 'test+1@here@gmail.com';
+    const resultString = 'test+1@<a href=\"mailto:here@gmail.com\">here@gmail.com</a>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test user mention with @here@here.com', () => {
+    const testString = '@here@here.com';
+    const resultString = '<mention-user>@here@here.com</mention-user>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test user mention with @abc_@here.com', () => {
+    const testString = '@abc_@here.com';
+    const resultString = '<mention-user>@abc_@here.com</mention-user>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test user mention with @here_@here.com', () => {
+    const testString = '@here_@here.com';
+    const resultString = '<mention-user>@here_@here.com</mention-user>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test here mention with @here_@here_.com', () => {
+    const testString = '@here_@here_.com';
+    const resultString = '<mention-here>@here</mention-here><em><mention-here>@here</mention-here></em>.com';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test here mention with @here@', () => {
+    const testString = '@here@';
+    const resultString = '<mention-here>@here</mention-here>@';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test here mention with @here@here', () => {
+    const testString = '@here@here';
+    const resultString = '<mention-here>@here</mention-here><mention-here>@here</mention-here>';
+    expect(parser.replace(testString)).toBe(resultString);
+});
+
+test('Test link with code fence inside the alias text part', () => {
+    const testString = '[```code```](google.com) '
+        + '[test ```code``` test](google.com)';
+
+    const resultString = '[<pre>code</pre>](<a href="https://google.com" target="_blank" rel="noreferrer noopener">google.com</a>) '
+        + '[test <pre>code</pre> test](<a href="https://google.com" target="_blank" rel="noreferrer noopener">google.com</a>)';
+    expect(parser.replace(testString)).toBe(resultString);
+});
