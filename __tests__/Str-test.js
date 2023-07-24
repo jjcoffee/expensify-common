@@ -119,6 +119,34 @@ describe('Str.isValidEmail', () => {
 
         // TLD too long
         expect(Str.isValidEmail('a@a.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkl')).toBeFalsy();
+
+        // From #17839
+        expect(Str.isValidEmail('abc-@mail.com')).toBeTruthy();
+        expect(Str.isValidEmail('abc#def@mail.com')).toBeTruthy();
+
+        // From #18181 (to remove as we already test local address length above)
+        expect(Str.isValidEmail('ganache-tasacks.0z+randomlongtexttoreachsomecharactersneedsommore@icloud.com')).toBeFalsy();
+        expect(Str.isValidEmail('ganache-tacks.0z+randomlongtexttoreachsomecharactersneedsommore@icloud.com')).toBeTruthy();
+        expect(Str.isValidEmail('ganache-tacks.0z+randomlongtexttor3eachsomecharactersneedsomemo_@icloud.com')).toBeTruthy();
+        expect(Str.isValidEmail('ganache-tacks.0z+randomlongtexttoreachsomecharactersneedsomemo_@icloud.com')).toBeTruthy();
+
+        // From #18855 (also remove for the same reason)
+        expect(Str.isValidEmail('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk@gmail.com')).toBeFalsy();
+
+        // From #20105
+        expect(Str.isValidEmail('@.com')).toBeFalsy();
+
+        // From #21110 but should remove as duplicate tests
+        expect(Str.isValidEmail('jane.doe@gmail..com')).toBeFalsy();
+        expect(Str.isValidEmail('jane.doe@gmail.com@example.com')).toBeFalsy();
+        expect(Str.isValidEmail('jane.doe@com')).toBeFalsy();
+        expect(Str.isValidEmail('jane.doe@-gmail.com')).toBeFalsy();
+
+        // From #21230 - remove as not a useful test
+        expect(Str.isValidEmail('Hello@gmail.com.com')).toBeTruthy();
+
+        // From #22032 - remove as not a useful test
+        expect(Str.isValidEmail('—@—.com')).toBeFalsy();
     });
 });
 
